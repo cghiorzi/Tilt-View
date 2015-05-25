@@ -34,16 +34,12 @@
 
 	function loadViz(visualization,refreshTime,region) {
 		window.clearInterval(intervalId);
-		workbook=viz.getWorkbook();
-		workbook.activateSheetAsync(visualization);
-		setRegion(region);
+		workbook.activateSheetAsync(visualization)
+			.then(function () {
+					workbook.showCustomViewAsync(region);
+				})
+			.otherwise(function() {alert("Failed loading region '" + region + "' for visualization '" + visualization + "'. Active sheet is: " + workbook.getActiveSheet().getName())});
 		intervalId=window.setInterval(function() {updateViz(refreshTime)},refreshTime);
-	}
-	
-	function setRegion(region) {
-		if (region != "None") {
-				viz.getWorkbook().showCustomViewAsync(region);
-		}
 	}
 		
 
@@ -66,7 +62,7 @@
 			<div id="navbar" class="navbar-collapse collapse">
 
 			  <ul class="nav navbar-nav navbar-right">
-				<li><a onClick='loadViz("Pitch",3000,"None")'><span class="glyphicon glyphicon glyphicon-sort nav-glyph" aria-hidden="true"></span> Pitch</a></li>
+				<li><a onClick='loadViz("Pitch",3000,"Pitch")'><span class="glyphicon glyphicon glyphicon-sort nav-glyph" aria-hidden="true"></span> Pitch</a></li>
 				<li class="dropdown">
 					<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						<span class="glyphicon glyphicon-globe nav-glyph"" aria-hidden="true"></span> 
@@ -86,7 +82,6 @@
 			</div>
 		  </div>
     </nav>
-	<button class='button' onClick='alert(workbook.getActiveSheet().getName());'>Check Worksheet</button>
 	<div class="container-fluid">
 		<div id='tableauViz' class="row col-xs-12"></div>
 	</div>
