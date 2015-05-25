@@ -5,39 +5,48 @@
 <script type='text/javascript' src='js/jquery.min.js'></script>
 <script type='text/javascript' src='js/bootstrap.min.js'></script>
 <script>
-var viz;
-var intervalId;
+	var viz;
+	var intervalId;
+	var workbook;
+	function initializeViz(visualization,refreshTime) {
+	  window.clearInterval(intervalId);
+	  var placeholderDiv = document.getElementById("tableauViz");
+	  var url = "http://107.189.92.92/#/views/Tilt-Hadoop/" + visualization;
+	  var options = { 
+		width: "100%",
+		height: "90%",
+		hideTabs: true,
+		hideToolbar: true,
+		onFirstInteractive: function () {
+		  workbook = viz.getWorkbook();
+		  activeSheet = workbook.getActiveSheet();
+		  intervalId=window.setInterval(function() {updateViz(refreshTime)},refreshTime);
+		}
+	  };
+	  viz = new tableau.Viz(placeholderDiv, url, options);
+	}      
 
-function initializeViz(visualization,refreshTime) {
-  window.clearInterval(intervalId);
-  var placeholderDiv = document.getElementById("tableauViz");
-  var url = "http://107.189.92.92/#/views/Tilt-Hadoop/" + visualization;
-  var options = { 
-	width: "100%",
-    height: "90%",
-    hideTabs: true,
-    hideToolbar: true,
-    onFirstInteractive: function () {
-      workbook = viz.getWorkbook();
-      activeSheet = workbook.getActiveSheet();
-	  intervalId=window.setInterval(function() {updateViz(refreshTime)},refreshTime);
-    }
-  };
-  viz = new tableau.Viz(placeholderDiv, url, options);
-}      
+	function updateViz(refreshTime) {
+		window.clearInterval(intervalId);
+		viz.refreshDataAsync();
+		intervalId=window.setInterval(function() {updateViz(refreshTime)},refreshTime);
+	}
 
-function updateViz(refreshTime) {
-	window.clearInterval(intervalId);
-	viz.refreshDataAsync();
-	intervalId=window.setInterval(function() {updateViz(refreshTime)},refreshTime);
-}
+	function loadViz(visualization,refreshTime,region) {
+		window.clearInterval(intervalId);
+		workbook=viz.getWorkbook();
+		workbook.activateSheetAsync(visualization);
+		setRegion(region);
+		intervalId=window.setInterval(function() {updateViz(refreshTime)},refreshTime);
+	}
+	
+	function setRegion(region) {
+		if (region != "None") {
+				viz.getWorkbook().showCustomViewAsync(region);
+		}
+	}
+		
 
-function loadViz(visualization	,refreshTime) {
-	window.clearInterval(intervalId);
-	 workbook = viz.getWorkbook();
-	 workbook.activateSheetAsync(visualization);
-	 intervalId=window.setInterval(function() {updateViz(refreshTime)},refreshTime);
-}
 </script>
 </head>
 <body>
@@ -57,26 +66,27 @@ function loadViz(visualization	,refreshTime) {
 			<div id="navbar" class="navbar-collapse collapse">
 
 			  <ul class="nav navbar-nav navbar-right">
-				<li><a onClick='loadViz("Pitch",3000)'><span class="glyphicon glyphicon glyphicon-sort nav-glyph" aria-hidden="true"></span> Pitch</a></li>
+				<li><a onClick='loadViz("Pitch",3000,"None")'><span class="glyphicon glyphicon glyphicon-sort nav-glyph" aria-hidden="true"></span> Pitch</a></li>
 				<li class="dropdown">
 					<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						<span class="glyphicon glyphicon-globe nav-glyph"" aria-hidden="true"></span> 
 						Location
 						</a>
 					<ul class="dropdown-menu" role="menu">
-						<!--<li class="disabled"><a role="menuitem" >Africa</a></li>
-						<li class="disabled"><a role="menuitem" >Asia</a></li>
-						<li class="disabled"><a role="menuitem" >Central America</a></li>
-						<li class="disabled"><a role="menuitem" >Europe</a></li>-->
-						<li><a role="menuitem" onClick='loadViz("Location",5000)'>North America</a></li>
-						<!--<li class="disabled"><a  role="menuitem" >Oceania</a></li>
-						<li class="disabled"><a  role="menuitem" >South America</a></li> -->
+						<li><a role="menuitem" onClick='loadViz("Location",5000,"Africa")'>Africa</a></li>
+						<li><a role="menuitem" onClick='loadViz("Location",5000,"Asia")'>Asia</a></li>
+						<li><a role="menuitem" onClick='loadViz("Location",5000,"Central America")'>Central America</a></li>
+						<li><a role="menuitem" onClick='loadViz("Location",5000,"Europe")'>Europe</a></li>
+						<li><a role="menuitem" onClick='loadViz("Location",5000,"North America")'>North America</a></li>
+						<li><a role="menuitem" onClick='loadViz("Location",5000,"Oceania")'>Oceania</a></li>
+						<li><a role="menuitem" onClick='loadViz("Location",5000,"South America")'>South America</a></li>
 					</ul>
 				</li>
 			  </ul>
 			</div>
 		  </div>
     </nav>
+	<button class='button' onClick='alert(workbook.getActiveSheet().getName());'>Check Worksheet</button>
 	<div class="container-fluid">
 		<div id='tableauViz' class="row col-xs-12"></div>
 	</div>
