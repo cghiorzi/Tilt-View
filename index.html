@@ -28,8 +28,13 @@
 
 	function updateViz(refreshTime) {
 		window.clearInterval(intervalId);
-		viz.refreshDataAsync();
-		intervalId=window.setInterval(function() {updateViz(refreshTime)},refreshTime);
+		viz.refreshDataAsync()
+			.then(function () { ;
+					intervalId=window.setInterval(function() {updateViz(refreshTime)},refreshTime);
+					})
+			.otherwise(function () {
+					intervalId=window.setInterval(function() {updateViz(refreshTime)},refreshTime);
+			});
 	}
 
 	function loadViz(visualization,refreshTime,region) {
@@ -62,7 +67,7 @@
 			<div id="navbar" class="navbar-collapse collapse">
 
 			  <ul class="nav navbar-nav navbar-right">
-				<li><a onClick='loadViz("Pitch",3000,"Pitch")'><span class="glyphicon glyphicon glyphicon-sort nav-glyph" aria-hidden="true"></span> Pitch</a></li>
+				<li><a onClick='loadViz("Pitch",2000,"Pitch")'><span class="glyphicon glyphicon glyphicon-sort nav-glyph" aria-hidden="true"></span> Pitch</a></li>
 				<li class="dropdown">
 					<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						<span class="glyphicon glyphicon-globe nav-glyph"" aria-hidden="true"></span> 
@@ -86,7 +91,7 @@
 		<div id='tableauViz' class="row col-xs-12"></div>
 	</div>
 	<script>
-	window.onload=initializeViz("Pitch",3000);
+	window.onload=initializeViz("Pitch",2000);
 	</script>
 </body>
 </html>

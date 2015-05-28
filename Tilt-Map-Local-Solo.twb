@@ -2,13 +2,13 @@
 
 <workbook source-platform='win' version='9.0' xml:base='http://107.189.92.92' xmlns:user='http://www.tableausoftware.com/xml/user'>
   <!-- build 9000.15.0318.1720                                -->
-  <repository-location id='Tilt-Hadoop' path='/workbooks' revision='1.9' />
+  <repository-location id='Tilt-Hadoop' path='/workbooks' revision='2.1' />
   <preferences>
     <preference name='ui.encoding.shelf.height' value='24' />
     <preference name='ui.shelf.height' value='26' />
   </preferences>
   <datasources>
-    <datasource caption='Custom_SQL_Query (gpadmin)' inline='true' name='greenplum.42120.638238425927' version='9.0'>
+    <datasource caption='Location_Data (gpadmin)' inline='true' name='greenplum.42120.638238425927' version='9.0'>
       <connection class='greenplum' dbname='gpadmin' odbc-native-protocol='yes' port='5432' server='107.189.92.92' server-oauth='' username='gpadmin' workgroup-auth-mode='prompt'>
         <relation name='Location_Data' type='text'>select devid as Device, &#13;&#10;&apos;User&apos; as region,&#13;&#10;stddev(tiltfb) as stddev_pitch, &#13;&#10;min(latitude) as latitude, &#13;&#10;min(longitude) as longitude&#13;&#10;from tilt_hadoop&#13;&#10;where to_timestamp(timestamp,&apos;YYYYMMDDHH24MISSUS&apos;) &gt;&gt; timezone(&apos;UTC&apos;, now() - interval &apos;3 seconds&apos;)&#13;&#10;group by devid&#13;&#10;union all&#13;&#10;select &apos;Eugene, OR&apos;,&apos;North America&apos;, 1,&apos;44.0519&apos;,&apos;-123.0867&apos;&#13;&#10;union all&#13;&#10;select &apos;Austin, TX&apos;,&apos;North America&apos;,1,&apos;30.2500&apos;,&apos;-97.7500&apos;&#13;&#10;union all&#13;&#10;select &apos;Washington, DC&apos;,&apos;North America&apos;,1,&apos;38.9047&apos;,&apos;-77.0164&apos;&#13;&#10;union all&#13;&#10;select &apos;St. Paul, MN&apos;,&apos;North America&apos;,1,&apos;44.9442&apos;,&apos;-93.0936&apos;&#13;&#10;union all&#13;&#10;select &apos;Montreal, QC&apos;,&apos;North America&apos;,1,&apos;45.5017&apos;,&apos;-73.5673&apos;&#13;&#10;union all&#13;&#10;select &apos;Toronto, ON&apos;,&apos;North America&apos;,1,&apos;43.7000&apos;,&apos;-79.4000&apos;&#13;&#10;union all&#13;&#10;select &apos;Regina, SK&apos;,&apos;North America&apos;,1,&apos;50.4547&apos;,&apos;-104.6067&apos;&#13;&#10;union all&#13;&#10;select &apos;Edmonton, AB&apos;,&apos;North America&apos;,1,&apos;53.5333&apos;,&apos;-113.5000&apos;&#13;&#10;union all&#13;&#10;select &apos;London, GB&apos;,&apos;Europe&apos;,1,&apos;51.5072&apos;,&apos;0.1275&apos;&#13;&#10;union all&#13;&#10;select &apos;Stockholm, SE&apos;,&apos;Europe&apos;,1,&apos;59.3294&apos;,&apos;18.0686&apos;&#13;&#10;union all&#13;&#10;select &apos;Rome, IT&apos;,&apos;Europe&apos;,1,&apos;41.9000&apos;,&apos;12.5000&apos;&#13;&#10;union all&#13;&#10;select &apos;Moscow, RU&apos;,&apos;Europe&apos;,1,&apos;55.7500&apos;,&apos;37.6167&apos;&#13;&#10;union all&#13;&#10;select &apos;Beijing, CN&apos;,&apos;Asia&apos;,1,&apos;39.9167&apos;, &apos;116.3833&apos;&#13;&#10;union all&#13;&#10;select &apos;New Dehli, IN&apos;,&apos;Asia&apos;,1,&apos;28.6139&apos;,&apos;77.2090&apos;&#13;&#10;union all&#13;&#10;select &apos;Bangkok, TH&apos;,&apos;Asia&apos;,1,&apos;13.7563&apos;,&apos;100.5018&apos;&#13;&#10;union all&#13;&#10;select &apos;Tokyo, JP&apos;,&apos;Asia&apos;,1,&apos;35.6833&apos;,&apos;139.6833&apos;&#13;&#10;union all&#13;&#10;select &apos;Sydney, AU&apos;,&apos;Oceania&apos;,1,&apos;-33.8650&apos;,&apos;151.2094&apos;&#13;&#10;union all&#13;&#10;select &apos;Wellington, NZ&apos;,&apos;Oceania&apos;,1,&apos;-41.2889&apos;,&apos;174.7772&apos;&#13;&#10;union all&#13;&#10;select &apos;Port Moresby, PG&apos;,&apos;Oceania&apos;,1,&apos;-9.5136&apos;,&apos;147.2188&apos;&#13;&#10;union all&#13;&#10;select &apos;Algiers, DZ&apos;,&apos;Africa&apos;,1,&apos;36.7667&apos;,&apos;3.2167&apos;&#13;&#10;union all&#13;&#10;select &apos;Cape Town, ZA&apos;,&apos;Africa&apos;,1,&apos;-33.9253&apos;,&apos;18.4239&apos;&#13;&#10;union all&#13;&#10;select &apos;N\&apos;Djamena, TD&apos;,&apos;Africa&apos;,1,&apos;12.1131&apos;,&apos;15.0492&apos;&#13;&#10;union all&#13;&#10;select &apos;Addis Ababa, ET&apos;,&apos;Africa&apos;,1,&apos;9.0300&apos;,&apos;38.7400&apos;&#13;&#10;union all&#13;&#10;select &apos;Brasília, BR&apos;,&apos;South America&apos;,1,&apos;-15.7939&apos;,&apos;-47.8828&apos;&#13;&#10;union all&#13;&#10;select &apos;Santiago, CL&apos;,&apos;South America&apos;,1,&apos;-33.4500&apos;,&apos;-70.6667&apos;&#13;&#10;union all&#13;&#10;select &apos;Lima, PE&apos;,&apos;South America&apos;,1,&apos;-12.0433&apos;,&apos;-77.0283&apos;&#13;&#10;union all&#13;&#10;select &apos;Mexico City, MX&apos;,&apos;Central America&apos;,1,&apos;19.0000&apos;,&apos;-99.1333&apos;&#13;&#10;union all&#13;&#10;select &apos;Tegucigalpa, HN&apos;,&apos;Central America&apos;,1,&apos;14.1000&apos;,&apos;-87.2167&apos;</relation>
         <metadata-records>
@@ -190,6 +190,9 @@
               <bucket>&quot;Tokyo, JP&quot;</bucket>
             </map>
             <map to='#c5b0d5'>
+              <bucket>&quot;f13f-2650&quot;</bucket>
+            </map>
+            <map to='#c5b0d5'>
               <bucket>&quot;Lima, PE&quot;</bucket>
             </map>
             <map to='#c5b0d5'>
@@ -249,7 +252,7 @@
     </datasource>
     <datasource caption='Pitch_Data (gpadmin)' inline='true' name='greenplum.42120.655905902779' version='9.0'>
       <connection class='greenplum' dbname='gpadmin' odbc-native-protocol='yes' port='5432' server='107.189.92.92' server-oauth='' username='gpadmin' workgroup-auth-mode='prompt'>
-        <relation name='Pitch_Data' type='text'>select to_timestamp(timestamp,&apos;YYYYMMDDHH24MISSUS&apos;) as time,&#13;&#10;devid as Device, tiltfb as Pitch&#13;&#10;from tilt_hadoop&#13;&#10;where to_timestamp(timestamp,&apos;YYYYMMDDHH24MISSUS&apos;) &gt;&gt; timezone(&apos;UTC&apos;, now() - interval &apos;1 minutes&apos;)</relation>
+        <relation name='Pitch_Data' type='text'>select to_timestamp(timestamp,&apos;YYYYMMDDHH24MISSUS&apos;) as time,&#13;&#10;devid as Device, tiltfb as Pitch&#13;&#10;from tilt_hadoop&#13;&#10;where to_timestamp(timestamp,&apos;YYYYMMDDHH24MISSUS&apos;) &gt;&gt; timezone(&apos;UTC&apos;, now() - interval &apos;30 seconds&apos;)</relation>
         <metadata-records>
           <metadata-record class='column'>
             <remote-name>time</remote-name>
@@ -320,7 +323,7 @@
       <table>
         <view>
           <datasources>
-            <datasource caption='Custom_SQL_Query (gpadmin)' name='greenplum.42120.638238425927' />
+            <datasource caption='Location_Data (gpadmin)' name='greenplum.42120.638238425927' />
           </datasources>
           <mapsources>
             <mapsource name='Tableau' />
@@ -439,7 +442,7 @@
   </worksheets>
   <windows>
     <window class='schema' source-height='-1' />
-    <window auto-hidden='0' class='worksheet' maximized='0' name='Pitch'>
+    <window auto-hidden='0' class='worksheet' maximized='1' name='Pitch'>
       <cards>
         <edge name='left'>
           <strip size='160'>
@@ -464,7 +467,7 @@
         </color-one-way>
       </highlight>
     </window>
-    <window auto-hidden='0' class='worksheet' maximized='1' name='Location'>
+    <window auto-hidden='0' class='worksheet' maximized='0' name='Location'>
       <cards>
         <edge name='left'>
           <strip size='160'>
@@ -493,6 +496,88 @@
     </window>
   </windows>
   <thumbnails>
+    <thumbnail height='192' name='Pitch' width='192'>
+      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
+      NjHa3YlQ9f8BtCGTGW1VtpcAAAAASUVORK5CYII=
+    </thumbnail>
     <thumbnail height='192' name='Location' width='192'>
       iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAAACXBIWXMAAA7EAAAOxAGVKw4b
       AAAgAElEQVR4nOy9W88lV5YgtNbal4g457vlxXaOXXaV1CUeCmhKGsS8g9SCfwCa4QmEkOAV
