@@ -8,23 +8,30 @@
 	var viz;
 	var intervalId;
 	var workbook;
+	var maintenance;
+	maintenance = true;
 	function initializeViz(visualization,refreshTime) {
-	  window.clearInterval(intervalId);
-	  var placeholderDiv = document.getElementById("tableauViz");
-	  var url = "http://107.189.92.92/#/views/Tilt-Hadoop/" + visualization;
-	  var options = { 
-		width: "100%",
-		height: "90%",
-		hideTabs: true,
-		hideToolbar: true,
-		onFirstInteractive: function () {
-		  workbook = viz.getWorkbook();
-		  activeSheet = workbook.getActiveSheet();
-		  intervalId=window.setInterval(function() {updateViz(refreshTime)},refreshTime);
+		  window.clearInterval(intervalId);
+		  var placeholderDiv = document.getElementById("tableauViz");
+		  if (maintenance == true) {
+			placeholderDiv.innerHTML="<h1><center>TiLT Visualization is currently under maintenance. Please check back again later.</h1></center>";
+			document.getElementById('navbar').style.visibility="hidden";
+		  } else {
+			  var url = "http://107.189.92.92/#/views/Tilt-Hadoop/" + visualization;
+			  var options = { 
+				width: "100%",
+				height: "90%",
+				hideTabs: true,
+				hideToolbar: true,
+				onFirstInteractive: function () {
+				  workbook = viz.getWorkbook();
+				  activeSheet = workbook.getActiveSheet();
+				  intervalId=window.setInterval(function() {updateViz(refreshTime)},refreshTime);
+				}
+			  };
+			  viz = new tableau.Viz(placeholderDiv, url, options);
 		}
-	  };
-	  viz = new tableau.Viz(placeholderDiv, url, options);
-	}      
+	}   
 
 	function updateViz(refreshTime) {
 		window.clearInterval(intervalId);
