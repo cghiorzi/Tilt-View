@@ -2,7 +2,7 @@
 
 <workbook source-platform='win' version='9.0' xml:base='http://107.189.92.92' xmlns:user='http://www.tableausoftware.com/xml/user'>
   <!-- build 9000.15.0318.1720                                -->
-  <repository-location id='Tilt-Gemfire' path='/workbooks' revision='2.3' />
+  <repository-location id='Tilt-Gemfire' path='/workbooks' revision='2.5' />
   <preferences>
     <preference name='ui.encoding.shelf.height' value='24' />
     <preference name='ui.shelf.height' value='26' />
@@ -213,7 +213,7 @@
     </datasource>
     <datasource caption='tilt-gemfire-location' inline='true' name='genericodbc.42239.638178946756' version='9.0'>
       <connection class='genericodbc' dbname='GEMFIREXD' odbc-connect-string-extras='IpAddress=phd;TcpPort=1528' odbc-dbms-name='GemFire XD' odbc-driver=' 7.1 GemFireXD' odbc-dsn='GemFireXD' odbc-suppress-connection-pooling='' odbc-use-connection-pooling='' port='' server='phd' server-oauth='' username='app' workgroup-auth-mode='prompt'>
-        <relation name='Custom_SQL_Query' type='text'>select devid as Device,&#13;&#10;avg(tiltfb) as avg_pitch,&#13;&#10;max(latitude) as latitude,&#13;&#10;max(longitude) as longitude&#13;&#10;from tilt_gemfire&#13;&#10;where latitude &lt;&lt;&gt;&gt; 0 and longitude &lt;&lt;&gt;&gt; 0&#13;&#10;group by devid&#13;&#10;union all&#13;&#10;select &apos;Eugene, OR&apos; as Device, 1 as avg_pitch,44.0519 as latitude,-123.0867 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Austin, TX&apos; as Device,1 as avg_pitch,30.2500 as latitude,-97.7500 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Buffalo, NY&apos; as Device,1 as avg_pitch,42.9047 as latitude,-78.8494 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;St. Paul, MN&apos; as Device,1 as avg_pitch,44.9442 as latitude,-93.0936 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;London, GB&apos; as Device,1 as avg_pitch,51.5072 as latitude,0.1275 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Stockholm, SE&apos; as Device,1 as avg_pitch,59.3294 as latitude,18.0686 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Rome, IT&apos; as Device,1 as avg_pitch,41.9000 as latitude,12.5000 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Moscow, RU&apos; as Device,1 as avg_pitch,55.7500 as latitude,37.6167 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Beijing, CN&apos; as Device,1 as avg_pitch,39.9167 as latitude, 116.3833 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;New Dehli, IN&apos; as Device,1 as avg_pitch,28.6139 as latitude,77.2090 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Bangkok, TH&apos; as Device,1 as avg_pitch,13.7563 as latitude,100.5018 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Tokyo, JP&apos; as Device,1 as avg_pitch,35.6833 as latitude,139.6833 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Sydney, AU&apos; as Device,1 as avg_pitch,-33.8650 as latitude,151.2094 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Wellington, NZ&apos; as Device,1 as avg_pitch,-41.2889 as latitude,174.7772 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Port Moresby, PG&apos; as Device,1 as avg_pitch,-9.5136 as latitude,147.2188 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Algiers, DZ&apos; as Device,1 as avg_pitch,36.7667 as latitude,3.2167 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Cape Town, ZA&apos; as Device,1 as avg_pitch,-33.9253 as latitude,18.4239 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;N&apos;&apos;Djamena, TD&apos; as Device,1 as avg_pitch,12.1131 as latitude,15.0492 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Addis Ababa, ET&apos; as Device,1 as avg_pitch,9.0300 as latitude,38.7400 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Brasília, BR&apos; as Device,1 as avg_pitch,-15.7939 as latitude,-47.8828 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Santiago, CL&apos; as Device,1 as avg_pitch,-33.4500 as latitude,-70.6667 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Lima, PE&apos; as Device,1 as avg_pitch,-12.0433 as latitude,-77.0283 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Mexico City, MX&apos; as Device,1 as avg_pitch,19.0000 as latitude,-99.1333 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Tegucigalpa, HN&apos; as Device,1 as avg_pitch,14.1000 as latitude,-87.2167 as longitude from dual</relation>
+        <relation name='Custom_SQL_Query' type='text'>select tg.devid as Device, tg.tiltfb as pitch, tg.latitude as latitude, tg.longitude as longitude&#13;&#10;from tilt_gemfire tg, &#13;&#10;(select devid, max(timestamp) as maxtime from tilt_gemfire group by devid) mt &#13;&#10;where tg.timestamp=mt.maxtime and tg.devid=mt.devid&#13;&#10;union all&#13;&#10;select &apos;Eugene, OR&apos; as Device, 1 as pitch,44.0519 as latitude,-123.0867 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Austin, TX&apos; as Device,1 as pitch,30.2500 as latitude,-97.7500 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Buffalo, NY&apos; as Device,1 as pitch,42.9047 as latitude,-78.8494 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;St. Paul, MN&apos; as Device,1 as pitch,44.9442 as latitude,-93.0936 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;London, GB&apos; as Device,1 as pitch,51.5072 as latitude,0.1275 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Stockholm, SE&apos; as Device,1 as pitch,59.3294 as latitude,18.0686 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Rome, IT&apos; as Device,1 as pitch,41.9000 as latitude,12.5000 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Moscow, RU&apos; as Device,1 as pitch,55.7500 as latitude,37.6167 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Beijing, CN&apos; as Device,1 as pitch,39.9167 as latitude, 116.3833 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;New Dehli, IN&apos; as Device,1 as pitch,28.6139 as latitude,77.2090 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Bangkok, TH&apos; as Device,1 as pitch,13.7563 as latitude,100.5018 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Tokyo, JP&apos; as Device,1 as pitch,35.6833 as latitude,139.6833 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Sydney, AU&apos; as Device,1 as pitch,-33.8650 as latitude,151.2094 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Wellington, NZ&apos; as Device,1 as pitch,-41.2889 as latitude,174.7772 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Port Moresby, PG&apos; as Device,1 as pitch,-9.5136 as latitude,147.2188 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Algiers, DZ&apos; as Device,1 as pitch,36.7667 as latitude,3.2167 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Cape Town, ZA&apos; as Device,1 as pitch,-33.9253 as latitude,18.4239 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;N&apos;&apos;Djamena, TD&apos; as Device,1 as pitch,12.1131 as latitude,15.0492 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Addis Ababa, ET&apos; as Device,1 as pitch,9.0300 as latitude,38.7400 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Brasília, BR&apos; as Device,1 as pitch,-15.7939 as latitude,-47.8828 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Santiago, CL&apos; as Device,1 as pitch,-33.4500 as latitude,-70.6667 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Lima, PE&apos; as Device,1 as pitch,-12.0433 as latitude,-77.0283 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Mexico City, MX&apos; as Device,1 as pitch,19.0000 as latitude,-99.1333 as longitude from dual&#13;&#10;union all&#13;&#10;select &apos;Tegucigalpa, HN&apos; as Device,1 as pitch,14.1000 as latitude,-87.2167 as longitude from dual</relation>
         <connection-customization class='genericodbc' enabled='false' version='9.0'>
           <vendor name='GemFire XD' />
           <driver name=' 7.1 GemFireXD' />
@@ -356,16 +356,16 @@
             </attributes>
           </metadata-record>
           <metadata-record class='column'>
-            <remote-name>AVG_PITCH</remote-name>
+            <remote-name>PITCH</remote-name>
             <remote-type>131</remote-type>
-            <local-name>[AVG_PITCH]</local-name>
+            <local-name>[PITCH]</local-name>
             <parent-name>[Custom_SQL_Query]</parent-name>
-            <remote-alias>AVG_PITCH</remote-alias>
+            <remote-alias>PITCH</remote-alias>
             <ordinal>2</ordinal>
             <local-type>real</local-type>
             <aggregation>Sum</aggregation>
-            <precision>42</precision>
-            <scale>4</scale>
+            <precision>38</precision>
+            <scale>0</scale>
             <contains-null>true</contains-null>
             <attributes>
               <attribute datatype='string' name='DebugRemoteType'>&quot;SQL_DECIMAL&quot;</attribute>
@@ -517,18 +517,18 @@
             <mapsource name='Tableau' />
           </mapsources>
           <datasource-dependencies datasource='genericodbc.42239.638178946756'>
-            <column datatype='real' name='[AVG_PITCH]' role='measure' type='quantitative'>
-            </column>
             <column datatype='string' name='[DEVICE]' role='dimension' type='nominal'>
             </column>
             <column datatype='real' name='[LATITUDE]' role='measure' semantic-role='[Geographical].[Latitude]' type='quantitative'>
             </column>
             <column datatype='real' name='[LONGITUDE]' role='measure' semantic-role='[Geographical].[Longitude]' type='quantitative'>
             </column>
-            <column-instance column='[AVG_PITCH]' derivation='None' name='[none:AVG_PITCH:qk]' pivot='key' type='quantitative' />
+            <column datatype='real' name='[PITCH]' role='measure' type='quantitative'>
+            </column>
             <column-instance column='[DEVICE]' derivation='None' name='[none:DEVICE:nk]' pivot='key' type='nominal' />
             <column-instance column='[LATITUDE]' derivation='None' name='[none:LATITUDE:qk]' pivot='key' type='quantitative' />
             <column-instance column='[LONGITUDE]' derivation='None' name='[none:LONGITUDE:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[PITCH]' derivation='None' name='[none:PITCH:qk]' pivot='key' type='quantitative' />
           </datasource-dependencies>
           <aggregation value='true' />
         </view>
@@ -568,7 +568,7 @@
             <mark class='Automatic' />
             <encodings>
               <color column='[genericodbc.42239.638178946756].[none:DEVICE:nk]' />
-              <size column='[genericodbc.42239.638178946756].[none:AVG_PITCH:qk]' />
+              <size column='[genericodbc.42239.638178946756].[none:PITCH:qk]' />
               <text column='[genericodbc.42239.638178946756].[none:DEVICE:nk]' />
             </encodings>
             <style>
@@ -626,7 +626,7 @@
   </worksheets>
   <windows>
     <window class='schema' source-height='-1' />
-    <window auto-hidden='0' class='worksheet' maximized='1' name='Pitch'>
+    <window auto-hidden='0' class='worksheet' maximized='0' name='Pitch'>
       <cards>
         <edge name='left'>
           <strip size='160'>
@@ -655,7 +655,7 @@
         </color-one-way>
       </highlight>
     </window>
-    <window auto-hidden='0' class='worksheet' maximized='0' name='Location'>
+    <window auto-hidden='0' class='worksheet' maximized='1' name='Location'>
       <cards>
         <edge name='left'>
           <strip size='160'>
@@ -663,7 +663,7 @@
             <card type='filters' />
             <card type='marks' />
             <card pane-specification-id='0' param='[genericodbc.42239.638178946756].[none:DEVICE:nk]' type='color' />
-            <card pane-specification-id='0' param='[genericodbc.42239.638178946756].[none:AVG_PITCH:qk]' type='size' />
+            <card pane-specification-id='0' param='[genericodbc.42239.638178946756].[none:PITCH:qk]' type='size' />
           </strip>
         </edge>
         <edge name='top'>
