@@ -1,7 +1,6 @@
-# Dashboard Manifest
+# Tilt-View Manifest
 applications:
 - name: tilt-view
 memory: 512MB
 host: tilt-view
-disk_quota: 80MB
 buildpack:  php_buildpack	

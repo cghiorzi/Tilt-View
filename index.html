@@ -9,7 +9,7 @@
 	var intervalId;
 	var workbook;
 	var maintenance;
-	maintenance = true;
+	maintenance = false;
 	function initializeViz(visualization,refreshTime) {
 		  window.clearInterval(intervalId);
 		  var placeholderDiv = document.getElementById("tableauViz");
@@ -17,7 +17,7 @@
 			placeholderDiv.innerHTML="<h1><center>TiLT Visualization is currently under maintenance. Please check back again later.</h1></center>";
 			document.getElementById('navbar').style.visibility="hidden";
 		  } else {
-			  var url = "http://107.189.92.92/#/views/Tilt-Hadoop/" + visualization;
+			  var url = "http://107.189.92.92/#/views/Tilt-Gemfire/" + visualization;
 			  var options = { 
 				width: "100%",
 				height: "90%",
