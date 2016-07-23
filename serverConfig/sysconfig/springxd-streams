@@ -1,4 +1,0 @@
-# Put one Spring XD command per line
-
-stream create --name tilt_gemfire  --definition "http --port=6668 | jdbc --driverClassName=com.pivotal.gemfirexd.jdbc.ClientDriver --password=app --username=app --url=jdbc:gemfirexd://springgem:1528 --tableName=tilt_gemfire --columns=timestamp,iso_timestamp,devid,TiltLR,TiltFB,Direction,OS,altitude,latitude,longitude"  --deploy
-
