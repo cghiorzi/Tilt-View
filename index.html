@@ -1,107 +1,291 @@
 <!DOCTYPE html>
+<meta charset="utf-8">
 <html>
-<head>
-<link href="css/bootstrap.min.css" rel="stylesheet"/>
-<script type='text/javascript' src='js/tableau-2.0.0.min.js'></script>
-<script type='text/javascript' src='js/jquery.min.js'></script>
-<script type='text/javascript' src='js/bootstrap.min.js'></script>
-<script>
-	var viz;
-	var intervalId;
-	var workbook;
-	var maintenance;
-	maintenance = false;
-	function initializeViz(visualization,refreshTime) {
-		  window.clearInterval(intervalId);
-		  var placeholderDiv = document.getElementById("tableauViz");
-		  if (maintenance == true) {
-			placeholderDiv.innerHTML="<h1><center>TiLT Visualization is currently under maintenance. Please check back again later.</h1></center>";
-			document.getElementById('navbar').style.visibility="hidden";
-		  } else {
-			  var url = "http://107.189.92.92/#/views/Tilt-Gemfire/" + visualization;
-			  var options = { 
-				width: "100%",
-				height: "100%",
-				hideTabs: true,
-				hideToolbar: true,
-				onFirstInteractive: function () {
-				  workbook = viz.getWorkbook();
-				  activeSheet = workbook.getActiveSheet();
-				  intervalId=window.setInterval(function() {updateViz(refreshTime)},refreshTime);
-				}
-			  };
-			  viz = new tableau.Viz(placeholderDiv, url, options);
+<head>	
+	<script src="js/d3.v4.min.js"></script>
+	<script>
+		var regions =["Africa","Asia","Europe","North America","Oceania","South America"];
+
+		function loadPage(url) {
+			window.location.href=url;
 		}
-	}   
+		var tiltAPI="http://tilt.cfapps.io/safe_dump?";
+		var min_ts=0;
+		var refreshInterval=100; // in milliseconds
+		var sampleWidth=30000 / refreshInterval; // 30 seconds of graphs (30000 milliseconds broken up into refreshInterval number of points)
 
-	function updateViz(refreshTime) {
-		window.clearInterval(intervalId);
-		viz.refreshDataAsync()
-			.then(function () { ;
-					intervalId=window.setInterval(function() {updateViz(refreshTime)},refreshTime);
-					})
-			.otherwise(function () {
-					intervalId=window.setInterval(function() {updateViz(refreshTime)},refreshTime);
-			});
-	}
 
-	function loadViz(visualization,refreshTime,region) {
-		window.clearInterval(intervalId);
-		workbook.activateSheetAsync(visualization)
-			.then(function () {
-					workbook.showCustomViewAsync(region);
-				})
-			.otherwise(function() {alert("Failed loading region '" + region + "' for visualization '" + visualization + "'. Active sheet is: " + workbook.getActiveSheet().getName())});
-		intervalId=window.setInterval(function() {updateViz(refreshTime)},refreshTime);
-	}
+		var svgWidth = 380;
+		var svgHeight = 166;
+		var largeSvgWidth=880;
+		var largeSvgHeight = 560;
+		
+		var margin = {top: 20, right: 20, bottom: 20, left: 40},
+			graphWidth = svgWidth- margin.left - margin.right,
+			graphHeight = svgHeight - margin.top - margin.bottom,
+			largeGraphWidth=largeSvgWidth - margin.left - margin.right,
+			largeGraphHeight= largeSvgHeight - margin.top - margin.bottom ;
 		
 
-</script>
+		
+		var allData={};
+
+		var x = d3.scaleLinear()
+			.domain([0, sampleWidth - 1])
+			.range([0, graphWidth]);
+
+		var y = d3.scaleLinear()
+			.domain([-180, 180])
+			.range([graphHeight, 0]);
+
+		var line = d3.line()
+			.x(function(d, i) {return x(i); })
+			.y(function(d) {return y(d);});
+			
+		var bigX = d3.scaleLinear()
+			.domain([0, sampleWidth - 1])
+			.range([0, largeGraphWidth]);
+
+		var bigY = d3.scaleLinear()
+			.domain([-180, 180])
+			.range([largeGraphHeight, 0]);
+		
+		var bigLine = d3.line()
+			.x(function(d, i) {return bigX(i); })
+			.y(function(d) {return bigY(d);});		
+		
+		active = d3.select(null);
+
+	</script>
+	
+	
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/tilt-map.css" rel="stylesheet">
 </head>
 <body>
 	<nav class="navbar navbar-inverse">
-		<div class="container-fluid">
-			<div class="navbar-header">
-			  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-				<span class="sr-only">Toggle navigation</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			  </button>
-			  <a class="navbar-brand" href="#">Tilt Visualization</a>
-			  
-			</div>
-			<img class="col-xs-3" src="images/federation-bar.png"/>
-			<div id="navbar" class="navbar-collapse collapse">
+			<div class="container-fluid">
+				<div class="navbar-header">
+				  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				  </button>
+				  <a class="navbar-brand" href="#">Tilt Visualization</a>
+				  
+				</div>
+				<img class="col-xs-5" id="federationLogo" src="images/federation-bar.png"/>
+				<div id="navbar" class="navbar-collapse collapse">
 
-			  <ul class="nav navbar-nav navbar-right">
-				<li><a onClick='loadViz("Pitch",2000,"Pitch")'><span class="glyphicon glyphicon glyphicon-sort nav-glyph" aria-hidden="true"></span> Pitch</a></li>
-				<li class="dropdown">
-					<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-						<span class="glyphicon glyphicon-globe nav-glyph" aria-hidden="true"></span> 
-						Location
+				  <ul class="nav navbar-nav navbar-right">
+					<li>
+						<a onClick='loadPage("index.html");'>
+							<span class="glyphicon glyphicon-sort nav-glyph" aria-hidden="true"></span> 
+							Pitch
 						</a>
-					<ul class="dropdown-menu" role="menu">
-						<li><a role="menuitem" onClick='loadViz("Location",2000,"Africa")'>Africa</a></li>
-						<li><a role="menuitem" onClick='loadViz("Location",2000,"Asia")'>Asia</a></li>
-						<li><a role="menuitem" onClick='loadViz("Location",2000,"Central America")'>Central America</a></li>
-						<li><a role="menuitem" onClick='loadViz("Location",2000,"Europe")'>Europe</a></li>
-						<li><a role="menuitem" onClick='loadViz("Location",2000,"North America")'>North America</a></li>
-						<li><a role="menuitem" onClick='loadViz("Location",2000,"Oceania")'>Oceania</a></li>
-						<li><a role="menuitem" onClick='loadViz("Location",2000,"South America")'>South America</a></li>
-					</ul>
-				</li>
-			  </ul>
-			</div>
-		  </div>
-    </nav>
-	<div class="container-fluid" id="tableauContainer">
-		<div id='tableauViz' class="row col-xs-12"></div>
+					</li>
+					<li>
+						<a onClick='loadPage("customerService.html");'>
+							<span class="glyphicon glyphicon-user nav-glyph" aria-hidden="true"></span> 
+							Service
+						</a>
+					</li>
+					<li>
+						<a onClick='loadPage("trucking.html");'>
+							<span class="glyphicon glyphicon-random nav-glyph" aria-hidden="true"></span> 
+							Logistics
+						</a>
+					</li>
+					<li>
+						<a onClick='loadPage("latlong.html");'>
+							<span class="glyphicon glyphicon-globe nav-glyph" aria-hidden="true"></span> 
+							Location
+						</a>
+					</li>
+				  </ul>
+				</div>
+			  </div>
+		</nav>
+	<div class="container-fluid">
+		<div class="row">
+			<h1 class="text-center">http://tilt.cfapps.io</h1>
+		</div>
+		<div id="graphs" class="row">
+		</div>
 	</div>
+	<div id="zoomedLine" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" onClick="reset();">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+				  <div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick="reset();"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title"></h4>
+				  </div>
+				  <div class="modal-body" >
+					<svg>
+						<g>
+							<g class="axis axis--y bigAxis">
+							</g>
+							<g>
+								<path class="line"></path>
+							</g>
+						</g>
+					</svg>
+				  <div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" onClick="reset();">Close</button>
+				  </div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+
 	<script>
-	window.onload=initializeViz("Pitch",2000);
+	
+
+	function updateGraphs() {
+		var url=tiltAPI + "min_score="+min_ts + "&latest=1";
+		
+		d3.json(url, function plotDevices(error, devData) {
+			if (error) return console.warn(error);
+			min_ts=devData.timestamp;
+		
+			var nextData=devData.data;	
+			var activeDevices={};
+			for (var i=0; i < nextData.length ; i++)  {	
+			
+				var j=JSON.parse(nextData[i].replace(/"{/g,"{").replace(/}"/g,"}").replace(/\\"/g,"\""));
+				var activeDevice=false;	
+				if(allData.hasOwnProperty(j.devid)) {
+
+					// Update existing devices
+					allData[j.devid].push(j.TiltFB);
+					activeDevices[j.devid]=true;					
+				} else {
+					// Add new devices
+
+					allData[j.devid]=[0,j.TiltFB];
+					activeDevices[j.devid]=true;
+				}
+				
+				// Keep sample window the correct size
+				if (allData[j.devid].length > sampleWidth) {
+					allData[j.devid].shift();
+				}
+			}
+			
+			// Remove inactive devices
+			for (var device in allData) {
+				if (! activeDevices.hasOwnProperty(device)) {
+					delete allData[device];
+					if (active.nodes().length > 0 && d3.select(".active").attr("id") == device) {
+						reset();
+					}
+				}
+			}
+			
+			updateLines(allData);
+
+		});
+	}
+
+	function updateLines(data) {
+		var devices=d3.select("#graphs").selectAll(".graph").data(Object.keys(data),function(d) {return d;} );
+
+		var newDevices=devices.enter()
+			.append("div")
+			.attr("id",function(d) {return d;})
+			.attr("class","graph col-lg-4")
+			.on("click", zoomLine)
+			.append("svg")
+				.attr("width", svgWidth)
+				.attr("height", svgHeight)
+				.append("g")
+					.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+		newDevices
+			.append("g")
+				.attr("class", "axis axis--y")
+				.call(d3.axisLeft(y));
+				
+		newDevices
+			.append("g")
+			.append("path")
+					.attr("class", "line")
+					.attr("id",function(d) { return "lineFor-" + d;});
+		
+		newDevices
+			.append("text")
+				.text(function(d) {return d;})
+					.attr("transform","translate(0,-5)");
+		
+			
+		devices.exit().remove();
+			
+			
+		for (var device in data) {
+			var thisLine=d3.select("#lineFor-" + device).datum(data[device]);
+			thisLine
+				.attr("d", line)
+				.attr("transform", null)
+				.transition()
+					.duration(500)
+					.ease(d3.easeLinear);
+				
+			  // Slide it to the left.
+			 thisLine.selectAll(".line").transition()
+				  .attr("transform", "translate(" + x(-1) + ",0)");
+	  
+			// Update zoomed line, if any
+
+			
+			if (active.nodes().length > 0) {
+				var activeId=d3.select(".active").select("path").data();
+				var zoomedLine=d3.select("#zoomedLine").select(".line").datum(allData[activeId]);
+				zoomedLine
+					.attr("d", bigLine)
+					.attr("transform", null)
+					.transition()
+						.duration(500)
+						.ease(d3.easeLinear);
+						
+				zoomedLine.selectAll(".line").transition()
+				  .attr("transform", "translate(" + x(-1) + ",0)");
+			}
+		}
+	}
+	
+	function zoomLine(d,i,nodes) {
+		if (active.node() === this) return reset();
+
+		active.classed("active", false);
+		active = d3.select(this).classed("active", true);
+		
+		d3.select("#zoomedLine").select("svg")
+			.attr("width", largeSvgWidth)
+			.attr("height", largeSvgHeight)
+			.select("g")
+				.attr("transform","translate(" + margin.left + "," + margin.top + ")");
+			
+		d3.select(".bigAxis")
+			.call(d3.axisLeft(bigY));
+		
+		
+		d3.select("#zoomedLine").select(".modal-title").text(d);
+		$("#zoomedLine").modal("show");
+	}
+	
+	function reset() {
+		active.classed("active", false);
+		active = d3.select(null);
+	
+		$("#zoomedLine").modal("hide");
+	}
+	
+	setInterval(updateGraphs,refreshInterval);
+	
+	
 	</script>
-	<link href="css/tilt-view.css" rel="stylesheet"/>
 </body>
 </html>
-

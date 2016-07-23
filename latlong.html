@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link href="css/bootstrap.min.css" rel="stylesheet"/>
+	<link href="css/tilt-map.css" rel="stylesheet">
+	<script type='text/javascript' src='js/jquery.min.js'></script>
+	<script type='text/javascript' src='js/d3.v4.min.js'></script>
+	<script type='text/javascript' src='js/topojson.v1.min.js'></script>	
+	<script type='text/javascript' src='js/bootstrap.min.js'></script>
+	<script language="javascript">
+
+	//TODO : enable zoom by click
+	
+	var regions =["Africa","Asia","Europe","North America","Oceania","South America"];
+	var regionZoomArgs={"Africa" :  		{"args" : {"translate" : [375,250], "scale" : 350}},
+						"Asia" :  			{"args" : {"translate" : [-50,430], "scale" : 350}},
+						"Europe" :  		{"args" : {"translate" : [300,870], "scale" : 550}},
+						"North America" :  	{"args" : {"translate" : [1100,550], "scale" : 350}},
+						"Oceania" :  		{"args" : {"translate" : [-920,-30], "scale" : 550}},
+						"South America" :  	{"args" : {"translate" : [860,80], "scale" : 350}}};
+	var active = d3.select(null);
+
+	var tiltAPI="http://tilt.cfapps.io/safe_dump?";
+	var svg;
+	var projection;
+	var path;
+	var width = 960;
+	var height = 500;	
+	var min_ts=0;
+	var refreshInterval=100;
+
+	function loadPage(url) {
+		window.location.href=url;
+	}
+
+	var zoomRegion=decodeURI(location.search.split("region=")[1]);
+		if (zoomRegion == "undefined") {
+			zoomRegion="World";
+	}
+	
+	function getDeviceData() {
+		var url=tiltAPI + "min_score="+min_ts + "&latest=1";
+		d3.json(url, function plotDevices(error, devData) {
+			if (error) return console.warn(error);
+			min_ts=devData.timestamp;
+			
+			devices=d3.select("svg").selectAll(".device")
+					.data(devData.data);
+			
+			devices.each(function(d) {
+						/**********************
+						The "data" array in the JSON from TiLT is actually interpreted by D3 as a string instead of an object. 
+						We need to convert it into JSON.
+						**********************/
+						var jsonData=JSON.parse(d);
+
+						d3.select(this).transition()
+						.attr("id",jsonData.devid)
+						.attr("r",d3.max([0.1,Math.sqrt(jsonData.TiltFB)]))
+						.attr("fill",getColor(jsonData.TiltFB))
+						.attr("stroke","#000000")
+						.attr("transform","translate(" + projection([jsonData.longitude,jsonData.latitude]) + ")");
+					});			
+			
+			devices.exit().remove();		
+				
+			devices.enter()
+				.append("circle")
+				.attr("class","device");					 
+			});
+			
+	}
+		
+
+
+	setInterval(function(){getDeviceData()},refreshInterval);
+
+	function getColor(val) {
+		var color;
+		
+		if (val > 0.1 && val <= 40) {
+			color="#006400";
+		} else if (val > 40 && val <= 60) {
+			color="#FFFF00";
+		} else if (val > 60 && val <= 80) {
+			color="#FFA500";
+		} else if (val > 80) {
+			color="#FF0000";
+		}
+		return color;
+	}
+
+	function doZoom() {
+		if (active.node() === this) return reset();
+		active.classed("active", false);
+		active = d3.select(this).classed("active", true);
+
+		var region=this.id;
+
+		projection
+				.scale(regionZoomArgs[region].args.scale)
+				.translate(regionZoomArgs[region].args.translate);	
+								
+		d3.selectAll("path").transition().duration(750).attr("d",path);
+
+	}
+	
+	function reset() {
+		active.classed("active", false);
+		active = d3.select(null);
+
+
+		projection.scale(153)
+			.translate([480,250]);
+		
+		d3.selectAll("path").transition().duration(750).attr("d",path);
+	}
+	
+
+	</script>
+</head>
+<body class="mapBody">
+<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+			<div class="navbar-header">
+			  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			  </button>
+			  <a class="navbar-brand" href="#">Tilt Visualization</a>
+			  
+			</div>
+			<img class="col-xs-5" src="images/federation-bar.png"/>
+			<div id="navbar" class="navbar-collapse collapse">
+
+			  <ul class="nav navbar-nav navbar-right">
+				<li>
+					<a onClick='loadPage("index.html");'>
+						<span class="glyphicon glyphicon-sort nav-glyph" aria-hidden="true"></span> 
+						Pitch
+					</a>
+				</li>
+				<li>
+					<a onClick='loadPage("customerService.html");'>
+						<span class="glyphicon glyphicon-user nav-glyph" aria-hidden="true"></span> Service
+					</a>
+				</li>
+				<li>
+					<a onClick='loadPage("trucking.html");'>
+						<span class="glyphicon glyphicon-random nav-glyph" aria-hidden="true"></span> Logistics
+					</a>
+				</li>
+				<li class="dropdown">
+					<a onClick='loadPage("latlong.html");'>
+						<span class="glyphicon glyphicon-globe nav-glyph" aria-hidden="true"></span> 
+						Location
+					</a>
+				</li>
+			  </ul>
+			</div>
+		  </div>
+    </nav>
+	
+	<div class="container-fluid" id="tiltMap">
+	</div>
+	<script>
+	window.onload=initialize();	
+	
+	function initialize() {
+		projection=d3.geoMercator();
+
+					
+		path=d3.geoPath()
+			.projection(projection);
+
+		svg = d3.select("#tiltMap").append("svg")
+		.attr("width", width)
+		.attr("height", height);
+		
+		var filter=svg.append("defs")
+			.append("filter")
+				.attr("id","drop-shadow")
+				.attr("x",0)
+				.attr("y",0)
+				.attr("width","200%")
+				.attr("height","200%");
+		
+		filter.append("feOffest")
+			.attr("result","offOut")
+			.attr("in","SourceAlpha")
+			.attr("dx",20)
+			.attr("dy",20);
+			
+		filter.append("feGaussianBlur")
+			.attr("result","blurOut")
+			.attr("in","offOut")
+			.attr("stdDeviation",10);
+		
+		filter.append("feBlend")
+			.attr("in","SourceGraphic")
+			.attr("in2","blurOut")
+			.attr("mode","normal");
+		
+		svg.append("rect")
+		.attr("class", "background")
+		.attr("width", width)
+		.attr("height", height)
+		.on("click",reset);
+
+		
+		
+		d3.json("countryData/world.json", function(error, world) {
+			if (error) return console.error(error);
+			var subunits=topojson.feature(world, world.objects.subunits);
+			
+			for (var i=0, len=regions.length;i < len; i++) {
+				var region=regions[i];
+				
+				g=svg.append("g").attr("id",region).attr("class","continent").on("click",doZoom);
+				
+				g.selectAll(".subunit")
+				.data(topojson.feature(world, world.objects.subunits).features.filter(function(d) { return d.properties.continent==region;}))
+				.enter()
+					.append("path")
+					.attr("class", function(d) {return "subunit " + d.id ;})
+					.attr("d",path)
+					.attr("stroke", "#888888")
+					.attr("filter","url(#drop-shadow)");
+					
+				
+				
+				if (region == "North America") {
+					g.append("path")
+					.datum(topojson.mesh(world, world.objects.states, function(a,b) {return a != b && a.id == "USA";}))
+					.attr("class", "state-boundary")
+					.attr("stroke", "#888888")
+					.attr("fill","none")
+					.attr("d", path);
+				}
+				
+				
+					
+			}
+			
+
+		});
+		
+
+	}
+
+	</script>
+	<link href="css/tilt-map.css" rel="stylesheet"/>
+</body>
+</html>
+
