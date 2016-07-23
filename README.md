@@ -1,5 +1,4 @@
 # Tilt-View
-Viewer for EMC Tilt Demo
 =
 
 Tilt-View is a set of Visualizations to be used with [Kurt Telep's TiLT](https://github.com/ktelep/tilt) application. 
