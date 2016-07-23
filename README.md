@@ -1,7 +1,7 @@
 # Tilt-View
 --
 
-Tilt-View is a set of Visualizations to be used with [Kurt Telep's TiLT](https://github.com/ktelep/tilt) application. 
+Tilt-View is a set of Visualizations to be used with [Kurt Telep's TiLT](https://github.com/ktelep/tilt) application. They are designed to help show how data and algorithms can be incorporated into business processes to aid in decision making.
 
 The following Visualizations are available:
 
