@@ -60,7 +60,7 @@
 	
 	
 	<link href="css/bootstrap.min.css" rel="stylesheet">
-	<link href="css/tilt-map.css" rel="stylesheet">
+	<link href="css/tilt-view.css" rel="stylesheet">
 </head>
 <body>
 	<nav class="navbar navbar-inverse">
@@ -75,7 +75,7 @@
 				  <a class="navbar-brand" href="#">Tilt Visualization</a>
 				  
 				</div>
-				<img class="col-xs-5" id="federationLogo" src="images/federation-bar.png"/>
+				<img class="col-xs-5" id="federationLogo" src="images/federation-bar.png" onClick="toggleAddress();"/>
 				<div id="navbar" class="navbar-collapse collapse">
 
 				  <ul class="nav navbar-nav navbar-right">
@@ -109,7 +109,7 @@
 		</nav>
 	<div class="container-fluid">
 		<div class="row">
-			<h1 class="text-center">http://tilt.cfapps.io</h1>
+			<h1 id="address" class="text-center">http://tilt.cfapps.io</h1>
 		</div>
 		<div id="graphs" class="row">
 		</div>
@@ -286,6 +286,14 @@
 	setInterval(updateGraphs,refreshInterval);
 	
 	
+	function toggleAddress () {
+		if ($("#address").css("visibility") == "hidden") {
+			$("#address").css("visibility","visible");
+		} else {
+			$("#address").css("visibility","hidden");
+		}
+		
+	}
 	</script>
 </body>
 </html>
