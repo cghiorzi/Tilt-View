@@ -12,8 +12,10 @@
 	
 	var regions =["Africa","Asia","Europe","North America","Oceania","South America"];
 	var startLong= -75;
+	var startLat=40;
 	var endLong=-122;
-	var start=[{"devid" : "mytruck" ,"latitude" : 40, "longitude" : startLong}] ;
+	var endLat=startLat;
+	var start=[{"devid" : "mytruck" ,"latitude" : startLat, "longitude" : startLong}] ;
 	var refreshInterval=100 // in milliseconds
 	var tiltAPI="http://tilt.cfapps.io/safe_dump?";
 	var svg;
@@ -113,6 +115,15 @@
 			
 			devices.exit().remove();
 		});	
+		
+		var lineStart=projection([startLong,startLat]);
+		var lineMid=projection([-90,40]);
+		var lineEnd=projection([endLong,endLat]);
+
+		svg.append("path")
+			.attr("class","line")
+			.style("stroke-dasharray",("5,5"))
+			.attr("d","M" + lineStart[0] + " " + lineStart[1] + " L" + lineMid[0] + " " + lineMid[1] + " L" +lineEnd[0] + " " + lineEnd[1] );
 	}
 	
 	
