@@ -30,20 +30,27 @@
 	
 	var activeDevices=["Devices"];
 	
+		
+		
 	function loadPage(url) {
 		window.location.href=url;
 	}
 
-	
-	function initialize() {
-		projection=d3.geoAlbersUsa()
+	projection=d3.geoAlbersUsa()
 			.scale(1070)
 			.translate([width / 2, height / 2]);
 
 					
-		path=d3.geoPath()
+	path=d3.geoPath()
 			.projection(projection);
 
+	var lineStart=projection([startLong,startLat]);
+	var lineMid=projection([-90,40]);
+	var lineEnd=projection([endLong,endLat]);
+	var devicePath="M" + lineStart[0] + " " + lineStart[1] + " ";
+	
+	function initialize() {
+		
 		svg = d3.select("#tiltMap").append("svg")
 			.attr("width", width)
 			.attr("height", height);
@@ -116,14 +123,15 @@
 			devices.exit().remove();
 		});	
 		
-		var lineStart=projection([startLong,startLat]);
-		var lineMid=projection([-90,40]);
-		var lineEnd=projection([endLong,endLat]);
-
+		
 		svg.append("path")
 			.attr("class","line")
 			.style("stroke-dasharray",("5,5"))
 			.attr("d","M" + lineStart[0] + " " + lineStart[1] + " L" + lineMid[0] + " " + lineMid[1] + " L" +lineEnd[0] + " " + lineEnd[1] );
+		
+		svg.append("path")
+			.attr("class","line")
+			.attr("id","devicePath");
 	}
 	
 	
@@ -178,6 +186,12 @@
 					start[0].latitude=start[0].latitude + 0.08;
 				}
 				
+				var currentPosition=projection([start[0].longitude,start[0].latitude]);
+				devicePath=devicePath + "L" + currentPosition[0] + " " + currentPosition[1]+ " ";
+			
+				d3.select("#devicePath")
+					.attr("d",devicePath);
+				
 			} else {
 				if (stage == 3 && start[0].longitude <= endLong) {
 					$("#reroute3").modal("show");
@@ -187,10 +201,13 @@
 
 			
 			device=d3.select("#mytruck");
+		
 
-					
 			device.transition()
-					.attr("transform",function(d) {return "translate(" + projection([d.longitude,d.latitude]) + ")";});						 
+					.attr("transform",function(d) {return "translate(" + projection([d.longitude,d.latitude]) + ")";});		
+
+
+			
 		});			
 	}
 		
