@@ -9,7 +9,8 @@
 		function loadPage(url) {
 			window.location.href=url;
 		}
-		var tiltAPI="http://tilt.cfapps.io/safe_dump?";
+/*CMG	var tiltAPI="http://tilt.cfapps.io/safe_dump?";*/
+		var tiltAPI="http://tilt.local.pcfdev.io/safe_dump?";
 		var min_ts=0;
 		var refreshInterval=100; // in milliseconds
 		var sampleWidth=30000 / refreshInterval; // 30 seconds of graphs (30000 milliseconds broken up into refreshInterval number of points)
@@ -75,7 +76,7 @@
 				  <a class="navbar-brand" href="#">Tilt Visualization</a>
 				  
 				</div>
-				<img class="col-xs-5" id="federationLogo" src="images/federation-bar.png" onClick="toggleAddress();"/>
+				<img class="col-xs-5" id="logo" src="images/dellemclogo.png" onClick="toggleAddress();"/>
 				<div id="navbar" class="navbar-collapse collapse">
 
 				  <ul class="nav navbar-nav navbar-right">
