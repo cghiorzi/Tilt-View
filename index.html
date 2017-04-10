@@ -157,17 +157,18 @@
 			var activeDevices={};
 			for (var i=0; i < nextData.length ; i++)  {	
 			
-				var j=JSON.parse(nextData[i].replace(/"{/g,"{").replace(/}"/g,"}").replace(/\\"/g,"\""));
+				var j=JSON.parse(nextData[i]);
+				var tiltFB=j.TiltFB;
 				var activeDevice=false;	
 				if(allData.hasOwnProperty(j.devid)) {
 
 					// Update existing devices
-					allData[j.devid].push(j.TiltFB);
+					allData[j.devid].push(tiltFB);
 					activeDevices[j.devid]=true;					
 				} else {
 					// Add new devices
 
-					allData[j.devid]=[0,j.TiltFB];
+					allData[j.devid]=[0,tiltFB];
 					activeDevices[j.devid]=true;
 				}
 				
